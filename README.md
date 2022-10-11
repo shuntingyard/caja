@@ -2,7 +2,7 @@
 Simple, rather minimal zsh theme. Some code has been stolen from [Pure](https://github.com/sindresorhus/pure).
 
 ## Installation
-1. Clone this repo somewhere. Here we'll use `$HOME/.zsh/pure`.
+1. Clone this repo somewhere. Here we'll use `$HOME/.zsh/caja`.
 ```sh
 mkdir -p "$HOME/.zsh"
 git clone https://github.com/shuntingyard/caja.git "$HOME/.zsh/caja"
@@ -11,7 +11,7 @@ git clone https://github.com/shuntingyard/caja.git "$HOME/.zsh/caja"
 2. Add the path of the cloned repo to `$fpath` in `$HOME/.zshrc`.
 ```sh
 # .zshrc
-fpath+=($HOME/.zsh/pure)
+fpath+=($HOME/.zsh/caja)
 ```
 
 3. Enable the `prompt` function in `$HOME/.zshrc`.
