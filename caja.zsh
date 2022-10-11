@@ -14,6 +14,7 @@ prompt_caja_state_setup() {
     # Check SSH_CONNECTION and the current state.
     local ssh_connection=${SSH_CONNECTION:-$PROMPT_CAJA_SSH_CONNECTION}
     local username hostname title
+
     if [[ -z $ssh_connection ]] && (( $+commands[who] )); then
     # When changing user on a remote system, the $SSH_CONNECTION
     # environment variable can be lost. Attempt detection via `who`.
@@ -53,19 +54,19 @@ prompt_caja_state_setup() {
     # Show `username@host` if logged in through SSH.
     if [[ -n $ssh_connection ]]; then
         username='%F{$prompt_colors[user]}%n%f'"$hostname"
-        title=%n"$hostname"
+        title="%n@%m"
     fi
 
     # Show `username@host` if inside a container and not in GitHub Codespaces.
-    if [[ -z "${CODESPACES}" ]]; then
-        prompt_caja_is_inside_container && username='%F{$prompt_colors[user]}%n%f'"$hostname"
-        title=%n"$hostname"
+    if [[ -z "${CODESPACES}" ]] && prompt_caja_is_inside_container; then
+        username='%F{$prompt_colors[user]}%n%f'"$hostname"
+        title="%n@%m"
     fi
 
     # Show `username@host` if root, with username in default color.
     if [[ $UID -eq 0 ]]; then
         username='%F{$prompt_colors[user:root]}%n%f'"$hostname"
-        title=%n"$hostname"
+        title="%n@%m"
     fi
 
     typeset -gA prompt_caja_state
