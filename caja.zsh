@@ -4,7 +4,7 @@ prompt_caja_is_inside_container() {
     local -r nspawn_file='/run/host/container-manager'
     [[ -r "$cgroup_file" && "$(< $cgroup_file)" = *(lxc|docker)* ]] \
         || [[ "$container" == "lxc" ]] \
-	|| [[ -r "$nspawn_file" ]]
+        || [[ -r "$nspawn_file" ]]
 }
 
 # borrowed from pure zsh theme
@@ -15,35 +15,35 @@ prompt_caja_state_setup() {
     local ssh_connection=${SSH_CONNECTION:-$PROMPT_CAJA_SSH_CONNECTION}
     local username hostname title
     if [[ -z $ssh_connection ]] && (( $+commands[who] )); then
-	# When changing user on a remote system, the $SSH_CONNECTION
-	# environment variable can be lost. Attempt detection via `who`.
-	local who_out
-	who_out=$(who -m 2>/dev/null)
-	if (( $? )); then
-	    # Who am I not supported, fallback to plain who.
-	    local -a who_in
-	    who_in=( ${(f)"$(who 2>/dev/null)"} )
-	    who_out="${(M)who_in:#*[[:space:]]${TTY#/dev/}[[:space:]]*}"
-	fi
+    # When changing user on a remote system, the $SSH_CONNECTION
+    # environment variable can be lost. Attempt detection via `who`.
+    local who_out
+    who_out=$(who -m 2>/dev/null)
+    if (( $? )); then
+        # Who am I not supported, fallback to plain who.
+        local -a who_in
+        who_in=( ${(f)"$(who 2>/dev/null)"} )
+        who_out="${(M)who_in:#*[[:space:]]${TTY#/dev/}[[:space:]]*}"
+    fi
 
-	local reIPv6='(([0-9a-fA-F]+:)|:){2,}[0-9a-fA-F]+'  # Simplified, only checks partial pattern.
-	local reIPv4='([0-9]{1,3}\.){3}[0-9]+'   # Simplified, allows invalid ranges.
-	# Here we assume two non-consecutive periods represents a
-	# hostname. This matches `foo.bar.baz`, but not `foo.bar`.
-	local reHostname='([.][^. ]+){2}'
+    local reIPv6='(([0-9a-fA-F]+:)|:){2,}[0-9a-fA-F]+'  # Simplified, only checks partial pattern.
+    local reIPv4='([0-9]{1,3}\.){3}[0-9]+'   # Simplified, allows invalid ranges.
+    # Here we assume two non-consecutive periods represents a
+    # hostname. This matches `foo.bar.baz`, but not `foo.bar`.
+    local reHostname='([.][^. ]+){2}'
 
-	# Usually the remote address is surrounded by parenthesis, but
-	# not on all systems (e.g. busybox).
-	local -H MATCH MBEGIN MEND
-	if [[ $who_out =~ "\(?($reIPv4|$reIPv6|$reHostname)\)?\$" ]]; then
-	    ssh_connection=$MATCH
+    # Usually the remote address is surrounded by parenthesis, but
+    # not on all systems (e.g. busybox).
+    local -H MATCH MBEGIN MEND
+    if [[ $who_out =~ "\(?($reIPv4|$reIPv6|$reHostname)\)?\$" ]]; then
+        ssh_connection=$MATCH
 
-	    # Export variable to allow detection propagation inside
-	    # shells spawned by this one (e.g. tmux does not always
-	    # inherit the same tty, which breaks detection).
-	    export PROMPT_CAJA_SSH_CONNECTION=$ssh_connection
-	fi
-	unset MATCH MBEGIN MEND
+        # Export variable to allow detection propagation inside
+        # shells spawned by this one (e.g. tmux does not always
+        # inherit the same tty, which breaks detection).
+        export PROMPT_CAJA_SSH_CONNECTION=$ssh_connection
+    fi
+    unset MATCH MBEGIN MEND
     fi
 
     hostname='%F{$prompt_colors[host]}@%m%f'
@@ -71,8 +71,8 @@ prompt_caja_state_setup() {
     typeset -gA prompt_caja_state
     #prompt_pure_state[version]="1.20.1"
     prompt_caja_state+=(
-	username    "$username"
-	title       "$title"
+        username    "$username"
+        title       "$title"
     )
 }
 
