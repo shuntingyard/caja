@@ -16,35 +16,35 @@ prompt_caja_state_setup() {
     local username hostname title
 
     if [[ -z $ssh_connection ]] && (( $+commands[who] )); then
-    # When changing user on a remote system, the $SSH_CONNECTION
-    # environment variable can be lost. Attempt detection via `who`.
-    local who_out
-    who_out=$(who -m 2>/dev/null)
-    if (( $? )); then
-        # Who am I not supported, fallback to plain who.
-        local -a who_in
-        who_in=( ${(f)"$(who 2>/dev/null)"} )
-        who_out="${(M)who_in:#*[[:space:]]${TTY#/dev/}[[:space:]]*}"
-    fi
+        # When changing user on a remote system, the $SSH_CONNECTION
+        # environment variable can be lost. Attempt detection via `who`.
+        local who_out
+        who_out=$(who -m 2>/dev/null)
+        if (( $? )); then
+            # Who am I not supported, fallback to plain who.
+            local -a who_in
+            who_in=( ${(f)"$(who 2>/dev/null)"} )
+            who_out="${(M)who_in:#*[[:space:]]${TTY#/dev/}[[:space:]]*}"
+        fi
 
-    local reIPv6='(([0-9a-fA-F]+:)|:){2,}[0-9a-fA-F]+'  # Simplified, only checks partial pattern.
-    local reIPv4='([0-9]{1,3}\.){3}[0-9]+'   # Simplified, allows invalid ranges.
-    # Here we assume two non-consecutive periods represents a
-    # hostname. This matches `foo.bar.baz`, but not `foo.bar`.
-    local reHostname='([.][^. ]+){2}'
+        local reIPv6='(([0-9a-fA-F]+:)|:){2,}[0-9a-fA-F]+'  # Simplified, only checks partial pattern.
+        local reIPv4='([0-9]{1,3}\.){3}[0-9]+'   # Simplified, allows invalid ranges.
+        # Here we assume two non-consecutive periods represents a
+        # hostname. This matches `foo.bar.baz`, but not `foo.bar`.
+        local reHostname='([.][^. ]+){2}'
 
-    # Usually the remote address is surrounded by parenthesis, but
-    # not on all systems (e.g. busybox).
-    local -H MATCH MBEGIN MEND
-    if [[ $who_out =~ "\(?($reIPv4|$reIPv6|$reHostname)\)?\$" ]]; then
-        ssh_connection=$MATCH
+        # Usually the remote address is surrounded by parenthesis, but
+        # not on all systems (e.g. busybox).
+        local -H MATCH MBEGIN MEND
+        if [[ $who_out =~ "\(?($reIPv4|$reIPv6|$reHostname)\)?\$" ]]; then
+            ssh_connection=$MATCH
 
-        # Export variable to allow detection propagation inside
-        # shells spawned by this one (e.g. tmux does not always
-        # inherit the same tty, which breaks detection).
-        export PROMPT_CAJA_SSH_CONNECTION=$ssh_connection
-    fi
-    unset MATCH MBEGIN MEND
+            # Export variable to allow detection propagation inside
+            # shells spawned by this one (e.g. tmux does not always
+            # inherit the same tty, which breaks detection).
+            export PROMPT_CAJA_SSH_CONNECTION=$ssh_connection
+        fi
+        unset MATCH MBEGIN MEND
     fi
 
     hostname='%F{$prompt_colors[host]}@%m%f'
@@ -86,7 +86,7 @@ prompt_caja_set_title() {
 
     # Don't set title over serial console.
     case $TTY in
-        /dev/ttyS[0-9]*) return;;
+        /dev/ttyS[0-9]*) return ;;
     esac
 
     # Show hostname if connected via SSH.
@@ -98,8 +98,8 @@ prompt_caja_set_title() {
 
     local -a opts
     case $1 in
-        expand-prompt) opts=(-P);;
-        ignore-escape) opts=(-r);;
+        expand-prompt) opts=(-P) ;;
+        ignore-escape) opts=(-r) ;;
     esac
 
     # Set title atomically in one print statement so that it works
@@ -111,14 +111,14 @@ prompt_caja_set_title() {
 prompt_caja_set_colors() {
     local color_temp key value
     for key value in ${(kv)prompt_colors}; do
-	zstyle -t ":prompt:caja:$key" color "$value"
-	case $? in
-	    1) # The current style is different from the one from zstyle.
+        zstyle -t ":prompt:caja:$key" color "$value"
+        case $? in
+            1) # The current style is different from the one from zstyle.
                 zstyle -s ":prompt:caja:$key" color color_temp
-		prompt_colors[$key]=$color_temp ;;
-	    2) # No style is defined.
-		prompt_colors[$key]=$prompt_colors_default[$key] ;;
-	esac
+                prompt_colors[$key]=$color_temp ;;
+            2) # No style is defined.
+                prompt_colors[$key]=$prompt_colors_default[$key] ;;
+        esac
     done
 }
 
@@ -177,14 +177,14 @@ prompt_caja_setup() {
     # Assemble the new prompt:
     local ps1=(
         $prompt_caja_state[username]    # user, host
-                                        # (As formatted in prompt_caja_state_setup.)
+        # (As formatted in prompt_caja_state_setup.)
         '%F{$prompt_colors[tty]} %y%f ' # tty
         '${pre_str}'                    # path or vcs_info from prompt_caja_precmd
         $'\n'
-                                        # SHLVL counter conditions
+        # SHLVL counter conditions
         '%(2L.%F{$prompt_colors[shlvl]}%L%f %F{$prompt_colors[at]}at%f.%F{$prompt_colors[at]}at%f) '
         '%F{$prompt_colors[time]}%*%f ' # HH:MM:SS
-                                        # Conditional, warn when last cmd failed.
+        # Conditional, warn when last cmd failed.
         '%B%(?.%#.%F{$prompt_colors[prompt:error]}%#%f)%b '
     )
     PS1="${(j::)ps1}"
