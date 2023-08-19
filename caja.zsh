@@ -107,6 +107,21 @@ prompt_caja_set_title() {
     print -n $opts $'\e]0;'${hostname}${2}$'\a'
 }
 
+# Change the colors if their value are different from the current ones.
+prompt_caja_set_colors() {
+    local color_temp key value
+    for key value in ${(kv)prompt_colors}; do
+	zstyle -t ":prompt:caja:$key" color "$value"
+	case $? in
+	    1) # The current style is different from the one from zstyle.
+                zstyle -s ":prompt:caja:$key" color color_temp
+		prompt_colors[$key]=$color_temp ;;
+	    2) # No style is defined.
+		prompt_colors[$key]=$prompt_colors_default[$key] ;;
+	esac
+    done
+}
+
 prompt_caja_precmd() {
     vcs_info  # Always load before displaying prompt.
 
@@ -119,6 +134,9 @@ prompt_caja_precmd() {
 
     # Shows the full path in the title.
     prompt_caja_set_title 'expand-prompt' '%~'
+
+    # Modify the colors if some have changed.
+    prompt_caja_set_colors
 }
 
 prompt_caja_setup() {
